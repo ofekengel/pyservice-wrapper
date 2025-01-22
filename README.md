@@ -1,12 +1,8 @@
-  # Service Wrapper
-<hr>
+# Service Wrapper
 
 A python tool to easily create services running under the os's service management
 
-## Usage
-<hr>
-
-### Function as a service
+## Function as a service
 Make a script into a service running under Windows's scm (linux WIP) 
 using a simple decorator.
 
@@ -37,6 +33,8 @@ if __name__ == "__main__":
 - For blocking functions look at [Blocking Functions](#blocking-functions)
 
 ### Blocking functions
+
+----
 It is recommended to use a Generator as the decorated function but not required.
 In order to decorate a blocking function:
 ```python
@@ -62,7 +60,7 @@ if __name__ == "__main__":
 will run `main()` is a separate spawned process.
 - SIGINT will be sent to that process the scm stop is called
 
-### Service Tooling
+## Service Tooling
 Controls for installing\removing the service are provided using the `ServiceTools`.
 
 They are to be used externally in scripts to streamline installation\removal etc.
