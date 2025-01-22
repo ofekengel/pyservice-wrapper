@@ -34,7 +34,7 @@ if __name__ == "__main__":
 #### NOTES:
 - The decorated function should not accept arguments
 - The `startup` should be non-blocking (open threads/processes).
-- For blocking functions look at [Blocking Functions]()
+- For blocking functions look at [Blocking Functions](#blocking-functions)
 
 ### Blocking functions
 It is recommended to use a Generator as the decorated function but not required.
