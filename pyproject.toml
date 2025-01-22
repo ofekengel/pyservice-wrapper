@@ -1,0 +1,22 @@
+[project]
+name = "service_wrapper"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "Ofek Engel", email = "ofek.engel@gmail.com"},
+]
+dependencies = ["pywin32>=308"]
+requires-python = ">=3.12"
+readme = "README.md"
+license = {text = "MIT"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+
+[tool.pdm]
+distribution = true
+
+[tool.pdm.build]
+run-setuptools = true
