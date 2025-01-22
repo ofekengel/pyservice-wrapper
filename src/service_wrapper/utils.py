@@ -1,6 +1,7 @@
 import asyncio
 import contextlib
-from typing import Generator
+import inspect
+from typing import Callable, Generator
 
 
 def wait_forever():
@@ -14,7 +15,12 @@ def wait_forever():
         asyncio.run(wait())
 
 
-def serve_forever(generator: Generator):
+def serve_forever(func: Callable):
+    if inspect.isgeneratorfunction(func) is False:
+        return func
+
+    generator: Generator = func()
+
     def wrapper():
         generator.send(None)
         try:

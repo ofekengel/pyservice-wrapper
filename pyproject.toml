@@ -1,7 +1,7 @@
 [project]
 name = "service_wrapper"
 version = "0.1.0"
-description = "Default template for PDM package"
+description = "Making services easy"
 authors = [
     {name = "Ofek Engel", email = "ofek.engel@gmail.com"},
 ]
@@ -20,3 +20,9 @@ distribution = true
 
 [tool.pdm.build]
 run-setuptools = true
+
+[dependency-groups]
+lint = [
+    "black>=24.10.0",
+    "isort>=5.13.2",
+]

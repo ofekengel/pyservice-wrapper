@@ -1,4 +1,4 @@
-from typing import Generator
+from typing import Callable, Generator
 
 import win32serviceutil
 
@@ -28,4 +28,4 @@ class BaseService(win32serviceutil.ServiceFramework, metaclass=ClassProperties):
     """
 
     # todo: something that is not generator?
-    LOGIC: Generator
+    LOGIC: Callable[[], Generator]

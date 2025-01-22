@@ -1,10 +1,13 @@
 import sys
-from typing import Callable, Generator, overload, TypeVar, Type
+from typing import Callable, Generator, Type, TypeVar, overload
+
 from typing_extensions import TypeIs
 
 from service_wrapper.base_service import BaseService
-from service_wrapper.service_wrapper import ServiceFunction, DefaultService, entrypoint
-from service_wrapper.service_wrapper_utils import serve_forever
+from service_wrapper.ext import BlockingService
+from service_wrapper.service_wrapper import (DefaultService, ServiceFunction,
+                                             entrypoint)
+from service_wrapper.utils import serve_forever
 
 _B = TypeVar("_B", bound=BaseService)
 _T = TypeVar("_T")
@@ -14,26 +17,26 @@ SERVICE_MAGIC = "__service__"
 
 @overload
 def as_service(
-        name: str,
-        display_name: str,
-        service_entrypoint: str = "",
+    name: str,
+    display_name: str,
+    service_entrypoint: str = "",
 ) -> Callable[[Callable[[], Generator]], ServiceFunction[Type[DefaultService]]]: ...
 
 
 @overload
 def as_service(
-        name: str,
-        display_name: str,
-        service_entrypoint: str = "",
-        base: Type[_B] = DefaultService,
+    name: str,
+    display_name: str,
+    service_entrypoint: str = "",
+    base: Type[_B] = DefaultService,
 ) -> Callable[[Callable[[], Generator]], ServiceFunction[Type[_B]]]: ...
 
 
 def as_service(
-        name: str,
-        display_name: str,
-        service_entrypoint: str = "",
-        base: Type[_B] = DefaultService,
+    name: str,
+    display_name: str,
+    service_entrypoint: str = "",
+    base: Type[_B] = DefaultService,
 ) -> Callable[[Callable[[], Generator]], ServiceFunction[Type[_B]]]:
     """
     .. code-block:: python
@@ -66,14 +69,13 @@ def as_service(
         _svc_entrypoint_ = service_entrypoint
 
     def inner(function: Callable[[], Generator]):
-        generator = function()
-        WindowsService.LOGIC = generator
+        WindowsService.LOGIC = function
 
         if len(sys.argv) > 1 and sys.argv[1] == service_entrypoint:
             func = entrypoint(WindowsService)
         else:
             # will run cleanup on Exception (KeyboardInterrupt)
-            func = serve_forever(generator)
+            func = serve_forever(function)
 
         func.__service__ = WindowsService
         return func
@@ -89,6 +91,7 @@ def get_service(function: ServiceFunction[_T]) -> _T:
     if is_service(function):
         return getattr(function, SERVICE_MAGIC)
     raise ValueError("function is not a service")
+
 
 __all__ = [
     "as_service",
