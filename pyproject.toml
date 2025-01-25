@@ -1,14 +1,27 @@
 [project]
 name = "service_wrapper"
-version = "0.1.0"
+version = "0.0.1"
 description = "Making services easy"
 authors = [
     {name = "Ofek Engel", email = "ofek.engel@gmail.com"},
 ]
-dependencies = ["pywin32>=308"]
+
+dependencies = ["pywin32>=308", "typing-extensions>=4.12.2"]
 requires-python = ">=3.12"
 readme = "README.md"
 license = {text = "MIT"}
+keywords = ["services", "windows"]
+classifiers=[
+        "Development Status :: 2 - Pre-Alpha",
+        "Intended Audience :: Developers",
+        "Topic :: Software Development",
+        "Topic :: System",
+        "Topic :: System :: Operating System",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3",
+        "Operating System :: Microsoft",
+        "Operating System :: Microsoft :: Windows",
+    ]
 
 [build-system]
 requires = ["pdm-backend"]
@@ -26,3 +39,5 @@ lint = [
     "black>=24.10.0",
     "isort>=5.13.2",
 ]
+
+# todo: lower the python version too, no need for python 3.12
