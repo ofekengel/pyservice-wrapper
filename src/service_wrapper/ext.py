@@ -9,19 +9,19 @@ import win32service
 
 from service_wrapper.base_service import BaseService
 
+Logger = logging.Logger("BlockingService")
 
-# fixme: test all the things
+
 class BlockingService(BaseService):
     LOGIC: Callable
 
     def __init__(self, args):
         super().__init__(args)
-        self.Logger = logging.Logger(type(self).name)
-        self.Logger.info("initializing service")
+        Logger.info("initializing service")
         self.process = Process(target=self.LOGIC)
 
     def SvcDoRun(self):
-        self.Logger.info("running service")
+        Logger.info("running service")
         try:
             # run user logic until yield is reached
             self.process.start()
@@ -30,8 +30,8 @@ class BlockingService(BaseService):
             logging.exception("")
 
     def SvcStop(self):
-        self.Logger.info("exiting")
+        Logger.info("exiting")
         self.ReportServiceStatus(win32service.SERVICE_STOP_PENDING)
         with contextlib.suppress(Exception):
             os.kill(self.process.pid, signal.SIGINT)
-        self.Logger.info("exited")
+        Logger.info("exited")

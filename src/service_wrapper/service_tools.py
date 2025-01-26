@@ -9,43 +9,49 @@ import win32service
 import win32serviceutil
 import winerror
 
+from service_wrapper.service_wrapper import ServiceData
 from service_wrapper.base_service import BaseService
 
 
 @dataclass
 class ServiceTools:
-    service: Type[BaseService]
+    service: ServiceData[Type[BaseService]]
 
     def start_service(self):
-        win32serviceutil.StartService(self.service.name)
-        time.sleep(5)  # fixme: needed?
-        win32serviceutil.WaitForServiceStatus(
-            self.service.name, win32service.SERVICE_RUNNING, 1
-        )
+        with self.service.set_service():
+            win32serviceutil.StartService(self.service.name)
+            time.sleep(5)  # fixme: needed?
+            win32serviceutil.WaitForServiceStatus(
+                self.service.name, win32service.SERVICE_RUNNING, 1
+            )
 
     def stop_service(self):
-        try:
-            win32serviceutil.StopService(self.service.name)
-        except win32api.error as e:
-            if e.winerror != winerror.ERROR_SERVICE_NOT_ACTIVE:
-                raise
-        win32serviceutil.WaitForServiceStatus(
-            self.service.name, win32service.SERVICE_STOPPED, 1
-        )
+        with self.service.set_service():
+            try:
+                win32serviceutil.StopService(self.service.name)
+            except win32api.error as e:
+                if e.winerror != winerror.ERROR_SERVICE_NOT_ACTIVE:
+                    raise
+            win32serviceutil.WaitForServiceStatus(
+                self.service.name, win32service.SERVICE_STOPPED, 1
+            )
 
     def install_service(self, exe_path: Path):
-        logging.info(win32serviceutil.GetServiceClassString(self.service))
-        logging.info(str(exe_path))
-        win32serviceutil.InstallService(
-            pythonClassString=win32serviceutil.GetServiceClassString(self.service),
-            exeName=str(exe_path),
-            serviceName=self.service.name,
-            displayName=self.service.display_name,
-            startType=win32service.SERVICE_AUTO_START,
-            exeArgs=self.service.entrypoint,
-        )
-        self.start_service()
+        with self.service.set_service():
+            logging.info(win32serviceutil.GetServiceClassString(self.service.svc_class))
+            logging.info(str(exe_path))
+            win32serviceutil.InstallService(
+                pythonClassString=win32serviceutil.GetServiceClassString(
+                    self.service.svc_class),
+                exeName=str(exe_path),
+                serviceName=self.service.name,
+                displayName=self.service.display_name,
+                startType=win32service.SERVICE_AUTO_START,
+                exeArgs=self.service.entrypoint,
+            )
+            self.start_service()
 
     def uninstall_service(self):
-        self.stop_service()
-        win32serviceutil.RemoveService(self.service.name)
+        with self.service.set_service():
+            self.stop_service()
+            win32serviceutil.RemoveService(self.service.name)
