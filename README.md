@@ -1,7 +1,7 @@
 # Service Wrapper
 
 A python tool to easily create services running under the os's service management
-[source code](https://github.com/ofekengel/pyservice-wrapper)
+[[source code](https://github.com/ofekengel/pyservice-wrapper)]
 
 ## Function as a service
 Make a script into a service running under Windows's scm (linux WIP) 
@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
 #### NOTES:
 - The decorated function should not accept arguments
-- The `startup` should be non-blocking (open threads/processes).
+- `startup` should be non-blocking (open threads/processes).
 - For blocking functions look at [Blocking Functions](#blocking-functions)
 
 ### Blocking functions
@@ -66,7 +66,7 @@ Controls for installing\removing the service are provided using the `ServiceTool
 
 They are to be used externally in scripts to streamline installation\removal etc.
 
-Should be used with tools like [invoke](https://www.pyinvoke.org/)
+For example, usage in CI with a tool like [invoke](https://www.pyinvoke.org/)
 
 ```python
 from pathlib import Path

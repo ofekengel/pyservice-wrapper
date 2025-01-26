@@ -1,6 +1,6 @@
 [project]
 name = "service_wrapper"
-version = "0.0.1"
+version = "0.0.2"
 description = "Making services easy"
 authors = [
     {name = "Ofek Engel", email = "ofek.engel@gmail.com"},
