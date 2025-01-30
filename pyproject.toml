@@ -1,27 +1,28 @@
 [project]
 name = "service_wrapper"
-version = "0.0.2"
+version = "0.0.3"
 description = "Making services easy"
 authors = [
-    {name = "Ofek Engel", email = "ofek.engel@gmail.com"},
+    { name = "Ofek Engel", email = "ofek.engel@gmail.com" },
 ]
 
 dependencies = ["pywin32>=308", "typing-extensions>=4.12.2"]
 requires-python = ">=3.12"
 readme = "README.md"
-license = {text = "MIT"}
+license = { text = "MIT" }
 keywords = ["services", "windows"]
-classifiers=[
-        "Development Status :: 2 - Pre-Alpha",
-        "Intended Audience :: Developers",
-        "Topic :: Software Development",
-        "Topic :: System",
-        "Topic :: System :: Operating System",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 3",
-        "Operating System :: Microsoft",
-        "Operating System :: Microsoft :: Windows",
-    ]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development",
+    "Topic :: System",
+    "Topic :: System :: Operating System",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Operating System :: Microsoft",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+]
 
 [build-system]
 requires = ["pdm-backend"]
@@ -33,6 +34,7 @@ distribution = true
 
 [tool.pdm.build]
 run-setuptools = true
+custom-hook = "build.py"
 
 [dependency-groups]
 lint = [
@@ -41,3 +43,8 @@ lint = [
 ]
 
 # todo: lower the python version too, no need for python 3.12
+dev = [
+    "pdm>=2.22.2",
+    "pdm-backend>=2.4.3",
+    "Pyinstaller>=6.11.1"
+]

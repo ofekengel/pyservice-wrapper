@@ -7,7 +7,7 @@ from typing import Callable
 
 import win32service
 
-from service_wrapper.base_service import BaseService
+from service_wrapper.windows.base_service import BaseService
 
 Logger = logging.Logger("BlockingService")
 

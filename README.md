@@ -13,8 +13,10 @@ Intended to work with [PyInstaller](https://pyinstaller.org/en/stable/)
 `python main.py` still works. Function will block until `KeyboardInterrupt` is received.
 
 `main.py`
+
 ```python
-from service_wrapper import as_service
+from service_wrapper.windows import as_service
+
 
 @as_service(SERVICE_NAME, SERVICE_DISPLAY_NAME, SERVICE_ENTRYPOINT_COMMAND)
 def main():
@@ -23,6 +25,7 @@ def main():
         yield
     finally:
         cleanup()
+
 
 if __name__ == "__main__":
     main()
@@ -38,9 +41,10 @@ if __name__ == "__main__":
 ----
 It is recommended to use a Generator as the decorated function but not required.
 In order to decorate a blocking function:
+
 ```python
-from service_wrapper import as_service
-from service_wrapper.ext import BlockingService
+from service_wrapper.windows import as_service
+from service_wrapper.windows import BlockingService
 
 
 @as_service(
@@ -51,7 +55,8 @@ from service_wrapper.ext import BlockingService
 )
 def main():
     run_logic()
-    
+
+
 if __name__ == "__main__":
     main()
 
@@ -73,8 +78,8 @@ from pathlib import Path
 
 from invoke import Context, task
 
-from service_wrapper import get_service
-from service_wrapper.service_tools import ServiceTools
+from service_wrapper.windows import get_service
+from service_wrapper.windows.service_tools import ServiceTools
 
 service_tools = ServiceTools(get_service(main))
 

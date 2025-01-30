@@ -1,22 +1,16 @@
 import contextlib
 import logging
-from dataclasses import dataclass
-from typing import Protocol, TypeVar, Callable, Generic, Type, ContextManager
+from typing import ContextManager, Type, TypeVar
 
 import servicemanager
 import win32event
 import win32service
 
-from service_wrapper.base_service import BaseService
+from service_wrapper.utils.utils import ServiceData
+from service_wrapper.windows.base_service import BaseService
 
 _T = TypeVar("_T")
 _B = TypeVar("_B", bound=Type[BaseService])
-
-
-class ServiceFunction(Protocol[_T]):
-    __service__: _T
-
-    def __call__(self) -> ...: ...
 
 
 class DefaultService(BaseService):
@@ -62,33 +56,34 @@ def tmp_change(cls: object, field_name: str, new_value: object):
         setattr(cls, field_name, old_value)
 
 
-@dataclass
-class ServiceData(Generic[_B]):
-    name: str
-    display_name: str
-    entrypoint: str
-    logic: Callable
-    svc_class: _B
-
-    @contextlib.contextmanager
-    def set_service(self) -> ContextManager[_B]:
-        with contextlib.ExitStack() as stack:
-            stack.enter_context(tmp_change(self.svc_class, "_svc_name_", self.name))
-            stack.enter_context(
-                tmp_change(self.svc_class, "_svc_display_name_", self.display_name)
+@contextlib.contextmanager
+def set_service(service_data: ServiceData[_B]) -> ContextManager[_B]:
+    with contextlib.ExitStack() as stack:
+        stack.enter_context(
+            tmp_change(service_data.svc_class, "_svc_name_", service_data.name)
+        )
+        stack.enter_context(
+            tmp_change(
+                service_data.svc_class, "_svc_display_name_", service_data.display_name
             )
-            stack.enter_context(
-                tmp_change(self.svc_class, "_svc_entrypoint_", self.entrypoint)
+        )
+        stack.enter_context(
+            tmp_change(
+                service_data.svc_class, "_svc_entrypoint_", service_data.entrypoint
             )
-            stack.enter_context(tmp_change(self.svc_class, "LOGIC", self.logic))
-            yield self.svc_class
+        )
+        stack.enter_context(
+            tmp_change(service_data.svc_class, "LOGIC", service_data.logic)
+        )
+        yield service_data.svc_class
 
 
 def entrypoint(service_data: ServiceData[_B]):
     def wrapper():
-        with service_data.set_service() as service:
+        with set_service(service_data) as service:
             service: Type[BaseService]
             servicemanager.Initialize()
             servicemanager.PrepareToHostSingle(service)
             servicemanager.StartServiceCtrlDispatcher()
+
     return wrapper

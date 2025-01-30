@@ -1,0 +1,13 @@
+[Unit]
+Description="{name}"
+StartLimitIntervalSec=5000
+StartLimitBurst=50
+
+[Service]
+Type=simple
+ExecStart={binary}
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
