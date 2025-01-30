@@ -4,11 +4,13 @@ A python tool to easily create services running under the os's service managemen
 [[source code](https://github.com/ofekengel/pyservice-wrapper)]
 
 ## Function as a service
-Make a script into a service running under Windows's scm (linux WIP) 
-using a simple decorator.
+Using a simple decorator, make your script a service running under:
+- Windows's scm
+- linux's systemd (needs additional testing)
+
 
 Intended to work with [PyInstaller](https://pyinstaller.org/en/stable/) 
-(or alternatives) to create an executable that can be registered under scm.
+(or alternatives) to create an executable that can be registered under scm or systemd.
 
 `python main.py` still works. Function will block until `KeyboardInterrupt` is received.
 
@@ -33,14 +35,16 @@ if __name__ == "__main__":
 
 #### NOTES:
 - The decorated function should not accept arguments
-- `startup` should be non-blocking (open threads/processes).
-- For blocking functions look at [Blocking Functions](#blocking-functions)
+- `startup` should be non-blocking (open threads/processes)
+- In linux function may be blocking
+- For blocking functions. look at [Blocking Functions](#blocking-functions)
 
 ### Blocking functions
 
 ----
 It is recommended to use a Generator as the decorated function but not required.
-In order to decorate a blocking function:
+in linux, a blocking function will behave normally.
+In order to decorate a blocking function in windows:
 
 ```python
 from service_wrapper.windows import as_service
@@ -51,7 +55,7 @@ from service_wrapper.windows import BlockingService
     SERVICE_NAME,
     SERVICE_DISPLAY_NAME,
     SERVICE_ENTRYPOINT_COMMAND,
-    base=BlockingService,
+    svc_class=BlockingService,
 )
 def main():
     run_logic()
@@ -65,6 +69,7 @@ if __name__ == "__main__":
 - When invoked using scm (PyInstalled and installed as a service), `BlockingService`
 will run `main()` is a separate spawned process.
 - SIGINT will be sent to that process the scm stop is called
+- `svc_class` attribute is not supported in linux
 
 ## Service Tooling
 Controls for installing\removing the service are provided using the `ServiceTools`.

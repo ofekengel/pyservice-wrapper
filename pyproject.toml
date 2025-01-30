@@ -24,6 +24,9 @@ classifiers = [
     "Operating System :: POSIX :: Linux",
 ]
 
+[project.urls]
+Homepage = "https://github.com/ofekengel/pyservice-wrapper"
+
 [build-system]
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
