@@ -4,9 +4,9 @@ A python tool to easily create services running under the os's service managemen
 [[source code](https://github.com/ofekengel/pyservice-wrapper)]
 
 ## Function as a service
-Using a simple decorator, make your script a service running under:
+Using a simple decorator, transform a script to a service running under:
 - Windows's scm
-- linux's systemd (needs additional testing)
+- linux's systemd (additional testing required)
 
 
 Intended to work with [PyInstaller](https://pyinstaller.org/en/stable/) 
@@ -14,10 +14,10 @@ Intended to work with [PyInstaller](https://pyinstaller.org/en/stable/)
 
 `python main.py` still works. Function will block until `KeyboardInterrupt` is received.
 
-`main.py`
+`main.py`:
 
 ```python
-from service_wrapper.windows import as_service
+from service_wrapper import as_service
 
 
 @as_service(SERVICE_NAME, SERVICE_DISPLAY_NAME, SERVICE_ENTRYPOINT_COMMAND)
@@ -43,8 +43,8 @@ if __name__ == "__main__":
 
 ----
 It is recommended to use a Generator as the decorated function but not required.
-in linux, a blocking function will behave normally.
-In order to decorate a blocking function in windows:
+In linux, a blocking function will behave normally.
+In order to decorate a blocking function for windows:
 
 ```python
 from service_wrapper.windows import as_service
@@ -67,9 +67,9 @@ if __name__ == "__main__":
 ```
 #### NOTES:
 - When invoked using scm (PyInstalled and installed as a service), `BlockingService`
-will run `main()` is a separate spawned process.
-- SIGINT will be sent to that process the scm stop is called
-- `svc_class` attribute is not supported in linux
+will run `main()` in a separate spawned process.
+- `SIGINT` will be sent to that process when stopping using scm
+- `svc_class` attribute is not supported in linux and will have no effect
 
 ## Service Tooling
 Controls for installing\removing the service are provided using the `ServiceTools`.
@@ -83,10 +83,9 @@ from pathlib import Path
 
 from invoke import Context, task
 
-from service_wrapper.windows import get_service
-from service_wrapper.windows.service_tools import ServiceTools
+from service_wrapper import get_service_tools
 
-service_tools = ServiceTools(get_service(main))
+service_tools = get_service_tools(main)
 
 EXECUTABLE_PATH = Path("./dist/svc.exe")
 
@@ -110,7 +109,6 @@ def install(_: Context) -> None:
 def restart(_: Context) -> None:
     service_tools.stop_service()
     service_tools.start_service()
-
 ```
 
 

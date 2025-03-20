@@ -43,8 +43,8 @@ class DefaultService(BaseService):
 
 
 @contextlib.contextmanager
-def tmp_change(cls: object, field_name: str, new_value: object):
-    should_del = hasattr(cls, field_name)
+def tmp_change(cls: Type, field_name: str, new_value: object):
+    should_del = not hasattr(cls, field_name)
     old_value = getattr(cls, field_name, object)
     setattr(cls, field_name, new_value)
     try:
@@ -58,23 +58,16 @@ def tmp_change(cls: object, field_name: str, new_value: object):
 
 @contextlib.contextmanager
 def set_service(service_data: ServiceData[_B]) -> ContextManager[_B]:
-    with contextlib.ExitStack() as stack:
-        stack.enter_context(
-            tmp_change(service_data.svc_class, "_svc_name_", service_data.name)
-        )
-        stack.enter_context(
-            tmp_change(
-                service_data.svc_class, "_svc_display_name_", service_data.display_name
-            )
-        )
-        stack.enter_context(
-            tmp_change(
-                service_data.svc_class, "_svc_entrypoint_", service_data.entrypoint
-            )
-        )
-        stack.enter_context(
-            tmp_change(service_data.svc_class, "LOGIC", service_data.logic)
-        )
+    with (
+        tmp_change(service_data.svc_class, "_svc_name_", service_data.name),
+        tmp_change(
+            service_data.svc_class,
+            "_svc_display_name_",
+            service_data.display_name,
+        ),
+        tmp_change(service_data.svc_class, "_svc_entrypoint_", service_data.entrypoint),
+        tmp_change(service_data.svc_class, "LOGIC", service_data.logic),
+    ):
         yield service_data.svc_class
 
 
