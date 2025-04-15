@@ -33,4 +33,6 @@ class ServiceTools(IServiceTools[ServiceData[None]]):
         self.ctl.run(Options.stop)
         Path(f"/etc/systemd/system/{self.service.name}.service").unlink(missing_ok=True)
         self.ctl.reload()
-''''''
+
+
+""""""
