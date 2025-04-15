@@ -1,6 +1,6 @@
 [project]
 name = "service_wrapper"
-version = "0.0.3"
+version = "0.0.4"
 description = "Making services easy"
 authors = [
     { name = "Ofek Engel", email = "ofek.engel@gmail.com" },
@@ -36,6 +36,15 @@ build-backend = "pdm.backend"
 [tool.pdm]
 distribution = true
 
+[[tool.pdm.source]]
+url = "https://pypi.org/simple/"
+verify_ssl = true
+name = "pypi"
+
+[[tool.pdm.source]]
+name = "private"
+url = "http://localhost:6060/"
+
 [tool.pdm.build]
 run-setuptools = true
 custom-hook = "build.py"
@@ -50,4 +59,6 @@ lint = [
 dev = [
     "pdm>=2.22.2",
     "pdm-backend>=2.4.3",
+    "twine>=6.1.0",
+    "pyshell-scripts>=0.1.0",
 ]
