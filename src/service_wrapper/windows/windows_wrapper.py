@@ -1,3 +1,4 @@
+import logging
 import sys
 from typing import Callable, Generator, Type, TypeVar, overload
 
@@ -12,10 +13,11 @@ _T = TypeVar("_T")
 def as_service(
     name: str,
     display_name: str,
-    service_entrypoint: str = "",
+    service_entrypoint: str = "entrypoint",
     svc_class: Type[_B] = DefaultService,
 ) -> Callable[[Callable[[], Generator]], ServiceFunction[ServiceData[Type[_B]]]]:
     def inner(function: Callable[[], Generator]):
+        logging.info(sys.argv)
         data = ServiceData(name, display_name, service_entrypoint, function, svc_class)
         if len(sys.argv) > 1 and sys.argv[1] == service_entrypoint:
             func = entrypoint(data)

@@ -1,5 +1,8 @@
 import contextlib
 import logging
+import os
+import sys
+from pathlib import Path
 from typing import ContextManager, Type, TypeVar
 
 import servicemanager
@@ -71,12 +74,23 @@ def set_service(service_data: ServiceData[_B]) -> ContextManager[_B]:
         yield service_data.svc_class
 
 
+@contextlib.contextmanager
+def patch_cwd() -> ContextManager[None]:
+    cwd = Path.cwd()
+    try:
+        os.chdir(Path(sys.executable).parent)
+        yield
+    finally:
+        os.chdir(cwd)
+
+
 def entrypoint(service_data: ServiceData[_B]):
     def wrapper():
-        with set_service(service_data) as service:
-            service: Type[BaseService]
-            servicemanager.Initialize()
-            servicemanager.PrepareToHostSingle(service)
-            servicemanager.StartServiceCtrlDispatcher()
+        with patch_cwd():
+            with set_service(service_data) as service:
+                service: Type[BaseService]
+                servicemanager.Initialize()
+                servicemanager.PrepareToHostSingle(service)
+                servicemanager.StartServiceCtrlDispatcher()
 
     return wrapper

@@ -9,6 +9,7 @@ import win32service
 
 from service_wrapper.windows.base_service import BaseService
 
+# todo: this is not working
 Logger = logging.Logger("BlockingService")
 
 
